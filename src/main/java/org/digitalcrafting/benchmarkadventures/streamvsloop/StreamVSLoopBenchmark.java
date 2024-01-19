@@ -17,7 +17,7 @@ import java.util.concurrent.*;
 @Fork(1)
 public class StreamVSLoopBenchmark {
     @State(Scope.Thread)
-    public static class MyState {
+    public static class MyStreamVSLoopState {
         List<Integer> numbers;
 
         @Setup(Level.Trial)
@@ -30,7 +30,7 @@ public class StreamVSLoopBenchmark {
     }
 
     @Benchmark
-    public int forLoopBenchmark(MyState state) {
+    public int forLoopBenchmark(MyStreamVSLoopState state) {
         int sum = 0;
         for (int number : state.numbers) {
             if (number % 2 == 0) {
@@ -41,7 +41,7 @@ public class StreamVSLoopBenchmark {
     }
 
     @Benchmark
-    public int parallelStreamBenchMark(MyState state) {
+    public int parallelStreamBenchMark(MyStreamVSLoopState state) {
         return state.numbers.parallelStream()
                 .filter(number -> number % 2 == 0)
                 .map(number -> number * number)
@@ -49,7 +49,7 @@ public class StreamVSLoopBenchmark {
     }
 
     @Benchmark
-    public int concurrentForLoopBenchmark(MyState state) throws InterruptedException, ExecutionException {
+    public int concurrentForLoopBenchmark(MyStreamVSLoopState state) throws InterruptedException, ExecutionException {
         int numThreads = Runtime.getRuntime().availableProcessors();
         ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
         List<Callable<Integer>> tasks = new ArrayList<>();
@@ -80,7 +80,7 @@ public class StreamVSLoopBenchmark {
     }
 
     @Benchmark
-    public int streamBenchMark(MyState state) {
+    public int streamBenchMark(MyStreamVSLoopState state) {
         return state.numbers.stream()
                 .filter(number -> number % 2 == 0)
                 .map(number -> number * number)
